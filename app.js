@@ -11,7 +11,6 @@ mongoose.connect(process.env.MONGODB_CONNECTION_STRING, {
 });
 
 const app = express();
-const port = 3000;
 app.use(function (req, res, next) {
   if (req.query.key === process.env.API_KEY) {
     next();
@@ -123,6 +122,6 @@ app.get("/fullSizeImg", async function (req, res) {
   }
 });
 
-var server = app.listen(port, function () {
-  console.log("listening port %s", port);
+var server = app.listen(process.env.PORT, function () {
+  console.log("listening port %s", process.env.PORT);
 });
