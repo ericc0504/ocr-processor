@@ -34,7 +34,7 @@ var OCRResultSchema = mongoose.Schema({
   img: { type: Buffer, required: true },
   thumbnail: { type: Buffer, required: true },
   text: { type: String, required: true },
-  createdAt: { type: Date, required: true, default: new Date() },
+  createdAt: { type: Date, required: true },
 });
 var OCRResult = mongoose.model("OCRResult", OCRResultSchema);
 
@@ -79,6 +79,7 @@ app.post("/processImg", async function (req, res) {
           img: req.body,
           thumbnail: thumbnail,
           text: ocrResult,
+          createdAt: new Date(),
         });
         newRecord.save(function (err) {
           if (err) {
