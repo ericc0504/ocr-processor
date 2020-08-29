@@ -102,7 +102,9 @@ app.post("/processImg", async function (req, res) {
 });
 
 app.get("/previousOcrResult", async function (req, res) {
-  let result = await OCRResult.find({}, "_id thumbnail createdAt").exec();
+  let result = await OCRResult.find({}, "_id thumbnail createdAt")
+    .sort([["createdAt", -1]])
+    .exec();
   res.send(result);
 });
 
