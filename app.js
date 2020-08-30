@@ -72,7 +72,7 @@ async function getOcrResult(base64) {
 app.post("/processImg", async function (req, res) {
   try {
     if (req.body && Object.keys(req.body).length !== 0) {
-      let ocrResult = "123"; // await getOcrResult(req.body);
+      let ocrResult = await getOcrResult(req.body);
       if (ocrResult) {
         const thumbnail = await imageThumbnail(req.body, thumbnailOption);
         var newRecord = new OCRResult({
@@ -102,7 +102,7 @@ app.post("/processImg", async function (req, res) {
 });
 
 app.get("/previousOcrResult", async function (req, res) {
-  let result = await OCRResult.find({}, "_id thumbnail createdAt")
+  let result = await OCRResult.find({}, "_id text thumbnail createdAt")
     .sort([["createdAt", -1]])
     .exec();
   res.send(result);
