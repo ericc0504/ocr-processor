@@ -3,7 +3,6 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const axios = require("axios");
 const imageThumbnail = require("image-thumbnail");
-const Jimp = require("jimp");
 const ObjectId = require("mongoose").Types.ObjectId;
 var mongoose = require("mongoose");
 mongoose.connect(process.env.MONGODB_CONNECTION_STRING, {
@@ -73,50 +72,23 @@ async function getOcrResult(base64) {
 app.post("/processImg", async function (req, res) {
   try {
     if (req.body && Object.keys(req.body).length !== 0) {
-      let ocrResult = "1234"; // await getOcrResult(req.body);
+      let ocrResult = await getOcrResult(req.body);
       if (ocrResult) {
-        let buf = Buffer.from(req.body, "base64");
-        let image = await Jimp.read(buf);
-        image.resize(150, 150);
-        image.rotate(90);
-        image.getBase64(Jimp.MIME_JPEG, (err, src) => {
+        const thumbnail = await imageThumbnail(req.body, thumbnailOption);
+        var newRecord = new OCRResult({
+          img: req.body,
+          thumbnail: thumbnail,
+          text: ocrResult,
+          createdAt: new Date(),
+        });
+        newRecord.save(function (err) {
           if (err) {
             res.status(500).send();
-            return;
+          } else {
+            newRecord.img = null;
+            res.send(newRecord);
           }
-          src = src.substring(23);
-          console.log(src);
-          var newRecord = new OCRResult({
-            img: req.body,
-            thumbnail: src,
-            text: ocrResult,
-            createdAt: new Date(),
-          });
-          newRecord.save(function (err) {
-            if (err) {
-              res.status(500).send();
-            } else {
-              newRecord.img = null;
-              newRecord.thumbnail = null;
-              res.send(newRecord);
-            }
-          });
         });
-        // const thumbnail = await imageThumbnail(req.body, thumbnailOption);
-        // var newRecord = new OCRResult({
-        //   img: req.body,
-        //   thumbnail: thumbnail,
-        //   text: ocrResult,
-        //   createdAt: new Date(),
-        // });
-        // newRecord.save(function (err) {
-        //   if (err) {
-        //     res.status(500).send();
-        //   } else {
-        //     newRecord.img = null;
-        //     res.send(newRecord);
-        //   }
-        // });
       } else {
         res.status(500).send();
       }
