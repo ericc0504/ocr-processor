@@ -9,7 +9,7 @@ It is a OCR server application, have to work with the [client](https://github.co
 ## Supporting Requests
 
 - `POST /processImg`
-  > Receive image as base64 string, send it to Google Vision API and get OCR Result, store the result and return it to client.
+  > Receive image as base64 string, send it to Google Vision API and get OCR Result, store the result to database and return it to client.
 - `GET /previousOcrResult`
   > Return all history to cleint
 - `GET /fullSizeImg`
